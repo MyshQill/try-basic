@@ -1,0 +1,53 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Email Sender</title>
+  </head>
+  <body>
+    <h1>Send an Email</h1>
+    <input
+      type="email"
+      id="email"
+      placeholder="Enter recipient email"
+      required
+    />
+    <textarea id="message" placeholder="Enter your message" required></textarea>
+    <button id="sendBtn">Send Email</button>
+
+    <p id="status"></p>
+
+    <script>
+      document.getElementById("sendBtn").addEventListener("click", async () => {
+        const email = document.getElementById("email").value;
+        const message = document.getElementById("message").value;
+        const status = document.getElementById("status");
+
+        if (!email || !message) {
+          status.textContent = "Please enter email and message.";
+          return;
+        }
+
+        try {
+          const response = await fetch(
+            "https://sandara.app.n8n.cloud/webhook/335a5590-7a65-469c-b5f4-a16184a0b64b",
+            {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({ email, message }),
+            },
+          );
+
+          if (response.ok) {
+            status.textContent = "Email sent successfully!";
+          } else {
+            status.textContent = "Failed to send email.";
+          }
+        } catch (err) {
+          status.textContent = "Error: " + err.message;
+        }
+      });
+    </script>
+  </body>
+</html>
