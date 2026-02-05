@@ -1,53 +1,52 @@
 <!doctype html>
-<html lang="en">
+<html>
   <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Email Sender</title>
+    <title>Trigger n8n</title>
   </head>
   <body>
-    <h1>Send an Email</h1>
+    <h2>Click the button to trigger n8n</h2>
+
     <input
       type="email"
-      id="email"
-      placeholder="Enter recipient email"
+      id="emailInput"
+      placeholder="Enter your email"
       required
     />
-    <textarea id="message" placeholder="Enter your message" required></textarea>
-    <button id="sendBtn">Send Email</button>
-
-    <p id="status"></p>
+    <button id="triggerButton">Click Me!</button>
 
     <script>
-      document.getElementById("sendBtn").addEventListener("click", async () => {
-        const email = document.getElementById("email").value;
-        const message = document.getElementById("message").value;
-        const status = document.getElementById("status");
+      document
+        .getElementById("triggerButton")
+        .addEventListener("click", async () => {
+          const email = document.getElementById("emailInput").value;
+          const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
-        if (!email || !message) {
-          status.textContent = "Please enter email and message.";
-          return;
-        }
-
-        try {
-          const response = await fetch(
-            "https://sandara.app.n8n.cloud/webhook/335a5590-7a65-469c-b5f4-a16184a0b64b",
-            {
-              method: "POST",
-              headers: { "Content-Type": "application/json" },
-              body: JSON.stringify({ email, message }),
-            },
-          );
-
-          if (response.ok) {
-            status.textContent = "Email sent successfully!";
-          } else {
-            status.textContent = "Failed to send email.";
+          if (!email || !emailPattern.test(email)) {
+            alert("Please enter a valid email address!");
+            return;
           }
-        } catch (err) {
-          status.textContent = "Error: " + err.message;
-        }
-      });
+
+          try {
+            const response = await fetch(
+              "https://sandara.app.n8n.cloud/webhook-test/button-click",
+              {
+                method: "POST",
+                headers: {
+                  "Content-Type": "application/json",
+                },
+                body: JSON.stringify({ email }),
+              },
+            );
+
+            if (response.ok) {
+              alert("Request sent successfully!");
+            } else {
+              alert("There was an error with the request.");
+            }
+          } catch (error) {
+            alert("An error occurred: " + error.message);
+          }
+        });
     </script>
   </body>
 </html>
